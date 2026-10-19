@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>휴대폰</title>
+<style>
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent;user-select:none}
+input,textarea{user-select:text}
+body{background:#d9dbe0;min-height:100dvh;display:grid;place-items:center;font-family:-apple-system,"SF Pro Text","Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+#phone{width:390px;height:min(844px,96dvh);border:10px solid #111;border-radius:56px;overflow:hidden;position:relative;background:#000;box-shadow:0 20px 60px #0004}
+@media(max-width:500px){body{display:block}#phone{width:100vw;height:100dvh;border:0;border-radius:0}}
+#screen{position:absolute;inset:0;overflow:hidden;color:#fff}
+#status{position:absolute;top:0;left:0;right:0;height:50px;padding:16px 30px 0;display:flex;justify-content:space-between;font-size:15px;font-weight:600;z-index:30;pointer-events:none}
+.inapp #status{color:#000}
+#island{position:absolute;top:11px;left:50%;width:110px;height:32px;margin-left:-55px;background:#000;border-radius:20px;z-index:31}
+#home{position:absolute;inset:0;padding:70px 20px 0;transform:scale(1.18);filter:blur(8px);transition:.55s cubic-bezier(.2,.8,.2,1)}
+.unlocked #home{transform:none;filter:none}
+#grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px 0}
+.ic{text-align:center;font-size:11px;text-shadow:0 1px 3px #0006;cursor:pointer}
+.ic i{display:grid;place-items:center;width:60px;height:60px;margin:0 auto 5px;border-radius:14px;font-size:30px;font-style:normal;text-shadow:none}
+.ic:active i{filter:brightness(.7)}
+#dock{position:absolute;bottom:24px;left:12px;right:12px;height:90px;border-radius:34px;background:#fff3;backdrop-filter:blur(20px);display:flex;justify-content:space-around;align-items:center}
+#dock .ic span{display:none}#dock .ic i{margin:0}
+#lock{position:absolute;inset:0;z-index:20;text-align:center;padding:110px 24px 0;transition:transform .5s cubic-bezier(.2,.8,.2,1);touch-action:none}
+.pass #lock{transform:translateY(-100%)}
+#ld{font-size:19px;font-weight:500}#lt{font-size:92px;font-weight:600;line-height:1.1}
+#note{margin-top:40px;text-align:left;background:#fff3;backdrop-filter:blur(20px);border-radius:20px;padding:12px 16px;font-size:14px}
+#note b{display:block;font-size:15px}
+#hint{position:absolute;bottom:42px;left:0;right:0;font-size:13px;opacity:.8}
+#pass{position:absolute;inset:0;z-index:18;background:#0005;backdrop-filter:blur(30px);text-align:center;padding-top:100px;transition:opacity .4s}
+.unlocked #pass{opacity:0;pointer-events:none}
+#dots{display:flex;gap:18px;justify-content:center;margin:26px 0 34px}
+#dots i{width:13px;height:13px;border:1.5px solid #fff;border-radius:50%}#dots i.f{background:#fff}
+#keys{display:grid;grid-template-columns:repeat(3,76px);gap:14px 22px;justify-content:center}
+#keys b,.kp b{display:grid;place-items:center;height:76px;border-radius:50%;background:#fff3;font-size:30px;font-weight:400;cursor:pointer}
+#keys b:active,.kp b:active{background:#fff8}
+#pass u{position:absolute;bottom:50px;right:50px;font-size:16px;text-decoration:none;cursor:pointer}
+#app{position:absolute;inset:0;z-index:10;background:#f2f2f7;color:#000;display:flex;flex-direction:column;transform:scale(.15);opacity:0;pointer-events:none;transition:transform .38s cubic-bezier(.2,.8,.2,1),opacity .25s;border-radius:44px;overflow:hidden}
+.open #app{transform:none;opacity:1;pointer-events:auto}
+#nav{display:flex;align-items:center;justify-content:space-between;padding:52px 16px 8px;font-size:17px;min-height:96px}
+#nav span{color:#0a84ff;width:80px;cursor:pointer}#act{text-align:right;font-size:26px}#nav b{flex:1;text-align:center}
+#body{flex:1;overflow:auto;padding:0 16px}#body::after{content:"";display:block;height:34px}
+h2{margin:4px 4px 12px}.sub{text-align:center;color:#8e8e93;margin-bottom:12px}
+ul{list-style:none;background:#fff;border-radius:12px;overflow:hidden}
+li{padding:12px 16px;border-bottom:1px solid #eee;cursor:pointer}li:last-child{border:0}
+li b{display:flex;justify-content:space-between;align-items:center;font-size:16px}em{font-style:normal;font-weight:400;color:#8e8e93;font-size:13px}
+li small{color:#8e8e93;font-size:14px;display:block;margin-top:2px}
+.card{background:#fff;border-radius:12px;padding:16px;font-size:16px;line-height:1.5;white-space:pre-wrap}
+.msg{width:fit-content;max-width:75%;padding:8px 13px;border-radius:18px;margin:5px 0;font-size:16px;line-height:1.35;white-space:pre-wrap}
+.me{background:#0a84ff;color:#fff;margin-left:auto}.them{background:#e5e5ea}
+.in{position:sticky;bottom:26px;display:flex;gap:8px;margin-top:10px}
+.in input{flex:1;border:1px solid #ccc;border-radius:20px;padding:9px 14px;font-size:16px;outline:0}
+.in b{width:36px;height:36px;border-radius:50%;background:#0a84ff;color:#fff;display:grid;place-items:center;cursor:pointer}
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.pg div,.big{aspect-ratio:1;background:#d8d8de;display:grid;place-items:center;font-size:11px;color:#777;cursor:pointer}
+.big{margin-bottom:12px;border-radius:12px}
+.seg{display:flex;background:#e3e3e8;border-radius:9px;padding:2px;margin-bottom:12px}
+.seg u{flex:1;text-align:center;text-decoration:none;padding:6px;border-radius:7px;font-size:14px;cursor:pointer}.seg u.on{background:#fff}
+#dn{height:44px;text-align:center;font-size:32px}
+.kp{display:grid;grid-template-columns:repeat(3,76px);gap:12px 20px;justify-content:center}
+.kp b{background:#e3e3e8;color:#000}
+.cb{display:flex;justify-content:center;align-items:center;gap:30px;margin-top:14px}
+.cb i{width:70px;height:70px;border-radius:50%;background:#34c759;display:grid;place-items:center;font-size:30px;font-style:normal;cursor:pointer}
+.cb em{font-size:26px;cursor:pointer}
+.av{width:90px;height:90px;border-radius:50%;background:#a5a5ad;color:#fff;font-size:40px;display:grid;place-items:center;margin:6px auto 10px}
+.url{background:#e3e3e8;border-radius:10px;padding:10px 14px;font-size:15px;color:#555;margin-bottom:14px}
+.art{width:70%;aspect-ratio:1;margin:6px auto 16px;border-radius:14px;background:linear-gradient(135deg,#fc3c44,#7b2ff7);display:grid;place-items:center;font-size:70px;box-shadow:0 10px 30px #0003}
+.pr{height:5px;background:#d1d1d6;border-radius:3px;margin:10px 0 14px}#pb{height:100%;width:0;background:#8e8e93;border-radius:3px}
+.ctl{display:flex;justify-content:center;gap:34px;font-size:34px;margin-bottom:16px}.ctl i{font-style:normal;cursor:pointer}
+.ti{width:100%;border:0;background:transparent;font-size:24px;font-weight:700;outline:0;margin-bottom:8px}
+.ta{width:100%;height:60vh;border:0;background:transparent;font-size:17px;line-height:1.5;outline:0;resize:none}
+.mh{display:flex;justify-content:space-between;font-size:18px;font-weight:600;margin:0 4px 10px}.mh b{color:#0a84ff;padding:0 10px;cursor:pointer}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;gap:6px 0;font-size:16px}
+.cg em{font-size:12px}.d{height:38px;line-height:30px;cursor:pointer;position:relative}.d.sel{background:#0a84ff;color:#fff;border-radius:50%;width:34px;height:34px;margin:0 auto}
+.d i{position:absolute;bottom:-4px;left:0;right:0;color:#ff3b30;font-style:normal;line-height:6px}
+.map{position:relative;height:300px;border-radius:14px;margin-bottom:14px;background:repeating-linear-gradient(0deg,#0000 0 39px,#fff8 39px 41px),repeating-linear-gradient(90deg,#0000 0 39px,#fff8 39px 41px),#cfe8c8}
+.map i{position:absolute;font-style:normal;font-size:28px;transform:translate(-50%,-100%);cursor:pointer}
+.vf{position:relative;height:470px;border-radius:20px;background:#000;color:#999;display:grid;place-items:center;text-align:center;padding:20px;overflow:hidden}
+#fl{position:absolute;inset:0;background:#fff;opacity:0;transition:opacity .2s}
+.sh{width:70px;height:70px;border-radius:50%;border:5px solid #ccc;background:#fff;margin:16px auto 0;cursor:pointer}.sh:active{background:#ddd}
+.wx{background:linear-gradient(#4a90e2,#7ab8f5);color:#fff;border-radius:20px;padding:24px;text-align:center;margin-bottom:12px}.wx h1{font-size:72px;font-weight:200}
+.hr{display:flex;gap:18px;overflow:auto;background:#fff;border-radius:12px;padding:12px 16px;margin-bottom:12px;text-align:center;font-size:14px;line-height:1.7}
+.ck{font-size:64px;font-weight:200;text-align:center;margin:8px 0 18px}
+.sw{width:46px;height:28px;border-radius:14px;background:#d1d1d6;position:relative;transition:.2s}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.2s}
+.sw.on{background:#34c759}.sw.on::after{left:20px}
+.cw{background:#000;border-radius:24px;padding:16px}#cdp{color:#fff;font-size:56px;font-weight:300;text-align:right;height:90px;line-height:90px;overflow:hidden}
+.kp.c{grid-template-columns:repeat(4,1fr);gap:10px}.kp.c b{height:70px;border-radius:35px;font-size:28px;background:#333;color:#fff}
+.kp.c b:nth-child(4n){background:#ff9f0a}.kp.c b:nth-child(-n+3){background:#a5a5a5;color:#000}.kp.c b:nth-child(17){grid-column:span 2;border-radius:35px}
+#bar{position:absolute;bottom:0;left:0;right:0;height:30px;z-index:40;cursor:pointer;touch-action:none}
+#bar::after{content:"";position:absolute;bottom:8px;left:50%;width:134px;margin-left:-67px;height:5px;border-radius:3px;background:#fff}
+.inapp #bar::after{background:#000}
+
+/* ---- 유리(글래스) 느낌 ---- */
+#app{background:radial-gradient(circle at 12% 8%,#bcd3ff,#0000 42%),radial-gradient(circle at 92% 62%,#ffc9e3,#0000 45%),radial-gradient(circle at 20% 95%,#c5f0e0,#0000 40%),#f2f2f7}
+#nav{position:absolute;top:0;left:0;right:0;z-index:3;background:#fff7;backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border-bottom:1px solid #fff9;box-shadow:0 1px 12px #0001}
+#body{padding:104px 16px 0}
+ul,.card,.hr{background:#fff8;backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);border:1px solid #fffa;border-radius:18px;box-shadow:0 6px 24px #0000000d}
+li{border-bottom-color:#0000000f}
+.seg{background:#0000000d}.seg u.on{background:#fffd;box-shadow:0 1px 5px #0002}
+.them{background:#fffc;border:1px solid #fff}.me{background:linear-gradient(#37a5ff,#0a84ff)}
+.in input{background:#fffa;backdrop-filter:blur(14px)}
+.kp b{background:#fff9;border:1px solid #fffb;box-shadow:0 4px 14px #0000001a}
+.kp.c b{border:0;box-shadow:none}
+.ic i{box-shadow:inset 0 1px 1px #fffa,inset 0 -6px 10px #0002,0 4px 12px #0003}
+#dock{background:#fff4;backdrop-filter:blur(28px) saturate(180%);border:1px solid #fff5;box-shadow:inset 0 1px 1px #fff7,0 10px 30px #0003}
+#note{border:1px solid #fff4;box-shadow:inset 0 1px 1px #fff5}
+#keys b{border:1px solid #fff4;backdrop-filter:blur(8px)}
+/* ---- 전화 화면 ---- */
+#call{position:absolute;inset:0;z-index:25;display:flex;flex-direction:column;align-items:center;padding:96px 24px 50px;color:#fff;text-align:center;background:radial-gradient(circle at 30% 12%,#5b6bb5,#0000 55%),radial-gradient(circle at 85% 88%,#b05a8a,#0000 50%),#12141f;opacity:0;pointer-events:none;transition:opacity .35s}
+.calling #call{opacity:1;pointer-events:auto}
+.calling #status{color:#fff}.calling #bar::after{background:#fff}
+#cn{font-size:36px;font-weight:500}#cs{margin-top:6px;font-size:18px;opacity:.7}
+#sb{flex:1;display:grid;place-items:center;width:100%}
+#sb span{max-width:310px;font-size:21px;line-height:1.55;font-weight:500;background:#0004;backdrop-filter:blur(14px);border:1px solid #fff3;border-radius:20px;padding:12px 18px;transition:opacity .3s}
+#sb span:empty{opacity:0}
+#cg,#ce,#ci{display:none}
+#cg{grid-template-columns:repeat(3,76px);gap:18px 26px;margin-bottom:38px}
+.gb{display:grid;place-items:center;height:76px;border-radius:50%;background:#fff3;border:1px solid #fff4;backdrop-filter:blur(12px);font-size:28px;cursor:pointer;position:relative;box-shadow:inset 0 1px 1px #fff5}
+.gb small{position:absolute;bottom:-20px;font-size:12px;white-space:nowrap}.gb.on{background:#fffd;color:#000}
+.rb{place-items:center;width:76px;height:76px;border-radius:50%;font-size:32px;cursor:pointer;display:grid;box-shadow:inset 0 1px 1px #fff7,0 6px 20px #0004}
+.rb.r{background:#ff3b30}.rb.g{background:#34c759}.rb.r span{transform:rotate(135deg)}
+.rw{display:grid;gap:10px;justify-items:center;font-size:14px}
+#call.out #cg{display:grid}#call.out #ce{display:grid}#call.in #ci{display:flex;width:100%;justify-content:space-around}
+/* ---- 전화 앱 하단 탭 ---- */
+#tb{position:absolute;bottom:0;left:0;right:0;z-index:3;display:flex;padding:8px 4px 26px;background:#fff7;backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border-top:1px solid #fff9;box-shadow:0 -1px 12px #0001}
+#tb:empty{display:none}
+#tb div{flex:1;text-align:center;font-size:10px;color:#8e8e93;cursor:pointer}
+#tb div b{display:block;font-size:22px;font-weight:400;filter:grayscale(1);opacity:.7;margin-bottom:2px}
+#tb div.on{color:#0a84ff}#tb div.on b{filter:none;opacity:1}
+/* ---- 상태바 / 시계 ---- */
+#sr{display:flex;gap:6px;align-items:center}#sr img{height:13px}
+.bat{position:relative;display:block;width:25px;height:12px;border:1px solid currentColor;border-radius:4px;padding:1px;opacity:.9}
+.bat i{display:block;height:100%;border-radius:2px;background:currentColor}
+.bat::after{content:"";position:absolute;right:-4px;top:3px;width:2px;height:4px;border-radius:0 2px 2px 0;background:currentColor}
+#al{position:absolute;top:56px;left:10px;right:10px;z-index:35;display:none;align-items:center;justify-content:space-between;padding:14px 18px;border-radius:24px;background:#222c;backdrop-filter:blur(28px);border:1px solid #fff3;color:#fff;box-shadow:0 10px 30px #0005}
+.alon #al{display:flex}#al u{background:#ff9f0a;border-radius:16px;padding:8px 16px;text-decoration:none;cursor:pointer;font-weight:600}
+.sl{display:grid;gap:8px;margin-bottom:6px}.sl>b{display:flex;justify-content:space-between;align-items:center}
+.sr{display:flex;gap:12px}.sr label{flex:1;font-size:13px;color:#8e8e93}
+input[type=time]{display:block;font-size:24px;border:0;background:transparent;font-family:inherit;outline:0}
+.fr{display:flex;justify-content:space-between;align-items:center;padding:6px 0}.fr input{font-size:17px;border:0;background:transparent;text-align:right;outline:0;font-family:inherit}
+.bg2{font-size:66px;font-weight:200;text-align:center;margin:22px 0;font-variant-numeric:tabular-nums}
+.cw2{display:flex;justify-content:space-between;margin:0 6px 22px}
+.cr{display:grid;place-items:center;width:84px;height:84px;border-radius:50%;background:#fff9;border:1px solid #fffb;font-size:17px;cursor:pointer;box-shadow:0 4px 14px #0000001a}
+.cr.g{background:#34c75933;color:#1a9a3b}.cr.r{background:#ff3b3033;color:#e0261b}
+.tmi{display:flex;gap:10px;margin:14px 0 24px}.tmi label{flex:1;text-align:center;font-size:13px;color:#8e8e93}
+.tmi input{width:100%;font-size:34px;text-align:center;border:0;border-radius:16px;background:#fff9;padding:12px 0;margin-top:6px;font-family:inherit;outline:0}
+/* ---- 아이콘 ---- */
+.ico{width:1em;height:1em;display:block;flex:none;object-fit:contain}
+.url{display:flex;gap:8px;align-items:center}
+.kp:not(.c) b,#keys b{display:flex;flex-direction:column;justify-content:center;align-items:center;line-height:1}
+.kp b span,#keys b span{font-size:32px}.kp b small,#keys b small{font-size:10px;letter-spacing:2px;height:11px;margin-top:3px;font-weight:600}
+.cb{gap:20px}.cb i{color:#fff;font-size:34px}.cb em{width:56px;height:56px;display:grid;place-items:center;font-size:30px;color:#666}.cb s{width:56px}
+.ctl{align-items:center}.ctl i{display:grid;place-items:center}
+.rb{color:#fff;font-size:34px}.gb .ico{font-size:30px}
+#tb div b{display:grid;place-items:center;height:28px;font-size:25px;filter:none;opacity:1;margin-bottom:3px}
+.ic i{position:relative;overflow:hidden}.ic i::after{content:"";position:absolute;inset:0;background:linear-gradient(#fff3,#0000 55%);pointer-events:none}
+.ic i svg{width:100%;height:100%;display:block}
+#dn{height:40px}#dm{height:22px;text-align:center;color:#8e8e93;font-size:16px;margin-bottom:8px}
+.dv{text-align:center;font-size:12px;font-weight:500;color:#8e8e93;margin:16px 0 6px}.mt{font-size:11px;color:#8e8e93;margin:-2px 6px 4px}.mt.r{text-align:right}
+</style></head><body>
+<div id="phone"><div id="screen">
+  <div id="island"></div>
+  <div id="status"><span id="clock"></span><span id="sr"></span></div>
+  <div id="home"><div id="grid"></div><div id="dock"></div></div>
+  <div id="app"><div id="nav"><span id="back" onclick="back()">‹ 홈</span><b id="ttl"></b><span id="act" onclick="add()"></span></div><div id="body"></div><div id="tb"></div></div>
+  <div id="pass"><div>암호 입력</div><div id="dots"><i></i><i></i><i></i><i></i></div><div id="keys"></div><u onclick="Q.classList.remove('pass');pw='';dots()">취소</u></div>
+  <div id="lock"><div id="ld"></div><div id="lt"></div><div id="note"></div><div id="hint">위로 쓸어 올려 열기</div></div>
+  <div id="call"><p id="cn"></p><p id="cs"></p><div id="sb"><span id="st"></span></div>
+    <div id="cg"></div>
+    <div class="rb r" id="ce" onclick="hang()"></div>
+    <div id="ci"></div></div>
+  <div id="al"><div><b id="at"></b><br><small id="as"></small></div><u onclick="stopAl()">중단</u></div>
+  <div id="bar"></div>
+</div></div>
+
+<script>
+/* ============================================================
+   ★ "수정 구역" 시작 ★  따옴표(" ") 안의 글자만 바꾸세요.
+   - (여기에 ... 입력) 부분을 지우고 원하는 내용으로 바꾸면 됩니다.
+   - 따옴표·쉼표·중괄호 { } [ ] 는 지우지 마세요. type 은 바꾸지 마세요.
+   - 항목을 늘리려면 { ... }, 한 덩어리를 복사해서 바로 뒤에 붙이세요.
+   - img: "" → 앱 아이콘 이미지. 인터넷 주소(https://...) 또는
+     이 파일과 같은 폴더에 둔 이미지 파일 이름(예: "msg.png")을 넣으세요. 비우면 기본 아이콘.
+   - 화면 위쪽 카메라 구멍(다이나믹 아일랜드)을 누르면 다시 잠깁니다.
+   ============================================================ */
+const PHONE = {
+  time: "",        // 상단 시계. 예: "9:41" / 비우면 실제 시간
+  today: "",       // 달력 기준 날짜. 예: "2026-10-18" / 비우면 오늘
+  lockDate: "10월 19일",
+  lockNotice: { title: "메시지 · 스코필드 형사", text: "너무 늦는다 싶으면 먼저 드십시오." },
+  wallpaper: "linear-gradient(160deg,#e3e3e3,#4f4f4f)",  // 배경: 색 또는 url('이미지주소')
+  /* ★ 아이콘 이미지 바꾸기: 따옴표 안에 이미지 주소(또는 같은 폴더의 파일 이름)를 넣으면 기본 아이콘 대신 그 이미지가 나옵니다. 비우면 기본 아이콘. */
+  icons: {
+    call: "",      // 통화(수락) 버튼, 키패드 통화 버튼, 연락처 통화 버튼  ← 여기 이미지를 넣으세요
+    end: "",       // 통화 종료·거절 버튼                                   ← 여기 이미지를 넣으세요
+    star: "",      // 전화 앱 '즐겨찾기' 탭                                 ← 여기 이미지를 넣으세요
+    recent: "",    // 전화 앱 '최근 통화' 탭                                ← 여기 이미지를 넣으세요
+    person: "",    // '연락처' 탭, 통화 화면의 연락처 버튼                    ← 여기 이미지를 넣으세요
+    keypad: "",    // '키패드' 탭, 통화 화면의 키패드 버튼                    ← 여기 이미지를 넣으세요
+    vm: "",        // '음성 사서함' 탭                                      ← 여기 이미지를 넣으세요
+    mute: "",      // 통화 화면 '음소거'                                    ← 여기 이미지를 넣으세요
+    speaker: "",   // 통화 화면 '스피커'                                    ← 여기 이미지를 넣으세요
+    plus: "",      // 통화 화면 '통화 추가'                                  ← 여기 이미지를 넣으세요
+    video: "",     // 통화 화면 'FaceTime'                                  ← 여기 이미지를 넣으세요
+    backspace: "", // 키패드·암호 입력의 지우기 버튼                          ← 여기 이미지를 넣으세요
+    search: "",    // 검색창 돋보기                                         ← 여기 이미지를 넣으세요
+    lock: "",      // 사파리 주소창 자물쇠                                   ← 여기 이미지를 넣으세요
+    globe: "",     // 시계 '세계 시계' 탭                                   ← 여기 이미지를 넣으세요
+    alarm: "",     // 시계 '알람' 탭                                       ← 여기 이미지를 넣으세요
+    stopwatch: "", // 시계 '스톱워치' 탭                                    ← 여기 이미지를 넣으세요
+    timer: "",     // 시계 '타이머' 탭                                      ← 여기 이미지를 넣으세요
+    bed: "",       // 알람의 '수면 | 기상' 카드                              ← 여기 이미지를 넣으세요
+    prev: "",      // 음악 이전 곡                                          ← 여기 이미지를 넣으세요
+    play: "",      // 음악 재생 버튼                                        ← 여기 이미지를 넣으세요
+    next: "",      // 음악 다음 곡                                          ← 여기 이미지를 넣으세요
+    note: "",      // 음악 앨범 이미지가 없을 때 표시되는 음표                 ← 여기 이미지를 넣으세요
+    pin: ""        // 지도 핀                                               ← 여기 이미지를 넣으세요
+  },
+  statusBar: { wifiImg: "", batteryImg: "", battery: 80 },  // 상단 아이콘. wifiImg/batteryImg = 이미지 주소(비우면 기본 아이콘) / battery = 기본 배터리 아이콘의 잔량(%)
+  owner: "안젤로 클레멘츠",
+
+  /* ▼ 직접 전화를 걸었을 때: 신호가 몇 번 가다가 사서함으로 넘어갑니다 */
+  voicemail: {
+    rings: 3,            // 신호 횟수
+    ringSec: 3,          // 신호 1번의 길이(초)
+    ringText: "뚜르르…", // 신호가 가는 동안 화면 중앙에 뜨는 자막
+    end: 14,             // 사서함 연결 후 몇 초에 통화가 끝나는지
+    script: [            // at = 사서함 연결 후 몇 초에 자막이 뜰지 / text = 자막 내용
+      { at: 0,  text: "연결이 되지 않아 음성사서함으로 연결되며" },
+	  { at: 3,  text: "삐 소리 후 통화료가 부과됩니다." },
+    ]
+  },
+  dock: ["전화", "사파리", "메시지", "음악"],              // 맨 아래 고정 앱 4개
+
+  apps: [
+    { name: "전화", img: "" /* ← 여기 앱 아이콘 이미지를 넣으세요 */, color: "#34c759", type: "phone", items: [   /* 전화 앱의 '최근 통화' 기록. s가 "부재중 전화 · ..."로 시작하면 부재중으로 표시 */
+	  { t: "베드로 신부", s: "수신 전화 · 오늘" },
+	  { t: "도미니코 신부", s: "수신 전화 · 목요일" },
+	  { t: "바오로 신부", s: "수신 전화 · 목요일" },
+	  { t: "스코필드 형사", s: "수신 전화 · 목요일" },
+      { t: "은사님", s: "부재중 전화 · 수요일" }, 
+	  { t: "수산나 수녀", s: "수신 전화 · 수요일" },
+	  { t: "스코필드 형사", s: "수신 전화 · 수요일" },
+	  { t: "마리아 수녀", s: "수신 전화 · 화요일" }]},
+
+    { name: "사파리", img: "" /* ← 여기 앱 아이콘 이미지를 넣으세요 */, color: "#0a84ff", type: "safari", items: [
+      { t: "Sainsbury's", url: "https://www.sainsburys.co.uk/", d: "Shop online at Sainsbury's for groceries, clothing, homewares, electricals, financial services and more. Together we're helping everyone eat better." },]},
+
+    { name: "메시지", img: "" /* ← 여기 앱 아이콘 이미지를 넣으세요 */, color: "#34c759", type: "chat", items: [   /* me=캐릭터, them=상대. replies=내가 보내면 오는 자동 답장(순서대로)
+        ★ 과거 대화 넣는 법 (마리아 수녀 방 참고): ["date","날짜"] 한 줄 = 날짜 구분선, 그 아래에 그날의 말풍선들을 순서대로 넣으면 됩니다.
+          말풍선 뒤에 세 번째 칸을 넣으면 시간이 말풍선 아래 표시됩니다. 예: ["them","안녕하세요","오후 3:20"] */
+      /* ★ 스코필드 형사: 메시지를 보내면 callAfter초 뒤에 전화가 걸려옵니다 (처음 1번) */
+      { name: "스코필드 형사", time: "(오늘) 6:11", replies: ["잠시만요."], msgs: [
+	  ["date", "10월 11일(일)"],
+        ["them", "몇시에 들어오셨습니까?"],
+        ["them", "저 출근할때 보니 아직 안 들어오신 것 같길래."],
+		["me",   "점심 쯤이요."],
+		["them", "바쁜 일은 다 끝나셨고요?"],
+		["me",   "네. 이제 별 일 없으면 한동안은 쉬지 싶습니다."],
+		["them", ":)"],
+		["me",   "뭐죠?"],
+		["them", "웃는 표정이요."],
+		["me",   "일이나 하시죠."],
+		["them", ":("],
+		["date", "(오늘) 6:11"],
+        ["them", "오늘 귀가가 조금 늦을 것 같은데 혹시 저녁 하셨습니까?"],
+        ["me", "네."],
+        ["them", "알겠습니다"],
+	    ["them", "너무 늦는다 싶으면 먼저 드십시오."]
+  ],
+        callAfter: 5,     // 메시지를 보낸 뒤 전화가 오기까지 걸리는 시간(초)
+        call: {
+          ringSec: 20,    // 이 시간 안에 안 받으면 부재중 전화가 됨(초)
+          end: 68,        // 전화를 받은 뒤 몇 초에 통화가 끝나는지
+          script: [       // at = 전화를 받은 뒤 몇 초에 자막이 뜰지 / text = 자막 내용 (줄을 늘리려면 복사해서 추가)
+            { at: 2,  text: "…여보세요." },
+            { at: 5,  text: "접니다." },
+			{ at: 7, text: "…" },
+            { at: 10, text: "아… 아뇨." },
+			{ at: 15, text: "…" },
+            { at: 24, text: "저번에 정리하지 않았습니까?" },
+			{ at: 30, text: "…" },
+			{ at: 32, text: "(탄식 소리)" },
+			{ at: 35, text: "…" },
+            { at: 40, text: "알겠습니다." },
+			{ at: 42, text: "…" },
+			{ at: 45, text: "저 기다린다고 식사 거르지 마시고." },
+			{ at: 50, text: "(웃음 소리)" },
+			{ at: 54, text: "예, 알겠습니다." },
+			{ at: 56, text: "…" },
+			{ at: 60, text: "나중에 봅시다." },
+			{ at: 62, text: "…" }
+          ] } },
+      { name: "은사님", time: "(토요일) 오후 3:20", replies: [], msgs: [
+	    ["date", "10월 3일(토)"],
+        ["them", "잘 지내고 있지?"],
+        ["them", "늘 말하지만 안젤로 너는 내 아들이니까. 부담 가지지 말고 언제든 연락 다오."],
+        ["me", "그럴게요."], 
+		["them", "언젠간 아버지라 불러주면 좋겠구나."],
+        ["date", "(토요일) 오후 3:20"],
+		["them", "안젤로, 아버지라 불러주면 좋겠다고 한 것 혹시 마음에 두고 있다면 그러지 말아."],
+        ["them", "부담이 아니라면 좋겠다."],] },
+      { name: "베드로 신부", time: "(월요일) 오후 1:23", replies: [], msgs: [
+	    ["date", "10월 11일(일)"],
+        ["them", "오늘도 나간다고 했나?"],
+        ["them", "너 요즘 좀 바쁘지 않아?"],
+		["me",   "네. 어째 저만 바쁜 것 같습니다만."],
+		["them", "오ㅎㅎ..."],
+		["them", "수고해!"],
+		["date", "(월요일) 오후 1:23"],
+        ["them", "점심 먹었어?"],
+        ["them", "아직 자?"],
+        ["me", "네."],
+	    ["them", "자는 사람이 어떻게 답장을???"],
+        ["them", "하여간 밥 먹자. 힘든 주 끝난 기념으로 내가 살게;)"],
+        ["me", "괜찮습니다. 피곤해서요."],
+		["them", "알겠어. 푹 쉬고 다음에 봐."],
+        ["them", "난 지우개 똥이나 먹어야겠다."],
+		["me", "맛있게 드세요."],
+        ["them", "저기 여기선 보통 다르게 반응하지 않아?"],	] },
+	  { name: "마리아 수녀", time: "(월요일) 오전 8:46", replies: [], msgs: [
+        /* ▼ 과거 대화 틀 (날짜가 오래된 것부터 위에서 아래로. 필요 없는 줄은 지우고, 더 넣으려면 줄을 복사해서 추가) */
+        ["date", "10월 11일(일)"],
+        ["them", "신부님! 금주 일정 알려드립니다."],
+        ["them", "월, 목, 토, 일 10시 텔링턴 예정되어 있으십니다. 의뢰 내용은 같습니다."],
+		["me",   "확인했습니다."],
+        /* ▼ 여기부터 최근 대화 */
+        ["date", "(일요일) 오전 8:46"],
+        ["them", "신부님~ 수고 많으셨습니다. 금주는 예정된 일정 없으며, 변동이 생긴다면 연락 드리겠습니다. 말씀 주셨던 부분은 주교님께 보고 올려 놓았습니다!"],
+        ["them", "아마 다음 나가실 땐 해결되지 싶어요."],
+        ["me", "감사합니다 시스터 마리아."], ] },
+	  { name: "요한.A 신부", time: "(일요일) 오후 9:51", replies: [], msgs: [
+	    ["date", "10월 11일(일)"],
+        ["them", "말씀 주셨던 것 마련해 두었으니 찾아가세요."],
+		["me",   "확인했습니다."],
+		["date", "(토요일) 오후 8:51"],
+        ["them", "파더 안젤로 오늘도 나가십니까? 시스터 마리아에게 들은 것이 없어서요."],
+        ["me", "예. 텔링턴 쪽으로 예정되어 있습니다."],
+		["me", "큰 이변 없다면 해 뜨기 전 돌아올 것 같습니다."],
+	    ["them", "확인했습니다. 나가시기 전 교구실 들러주세요."], ] },
+]},
+
+    { name: "음악", img: "" /* ← 여기 앱 아이콘 이미지를 넣으세요 */, color: "#fc3c44", type: "music", items: [   /* art: 앨범 이미지 주소 / link: ▶ 재생 버튼을 누르면 이동할 주소 (예: "https://www.youtube.com/watch?v=...") */
+      { t: "Flower", s: "Johnny Stimson", art: "https://i.postimg.cc/Z0XXDsXm/869773.jpg", link: "https://youtu.be/sgNkCrAhTGc?si=V0TlvkkFgOvqXGna", d: "" },
+      { t: "Glow", s: "DOZY", art: "https://i.postimg.cc/ThKZ0vNR/ab67616d00001e02722300cdbf5bb22e1d2e985f.jpg", link: "https://www.youtube.com/watch?v=vJ-am5gmkSo", d: "" } ]},
+
+    { name: "사진", img: "" /* ← 여기 앱 아이콘 이미지를 넣으세요 */, color: "#fff", type: "photos", items: [   /* src: 사진 주소. 비우면 회색 칸 */
+      { src: "https://i.postimg.cc/yW22rp2d/bernd-dittrich-z-KVDx3Xaemc-unsplash.jpg", cap: "" }, { src: "https://i.postimg.cc/V522HZ2N/tolga-ahmetler-ho-Hb-f-GCMI-unsplash.jpg", cap: "" } ]},
+
+    { name: "메모", img: "" /* ← 여기 앱 아이콘 이미지를 넣으세요 */, color: "#ffd60a", type: "notes", items: [   /* t=제목, d=본문 (＋로 새 메모 작성 가능) */
+      { t: "일정", d: "월, 목, 토, 일 10시 텔링턴 구마" },
+      { t: "메모", d: "금요일 오후 4시 세탁소" } ]},
+
+    { name: "연락처", img: "" /* ← 여기 앱 아이콘 이미지를 넣으세요 */, color: "#8e8e93", type: "contacts", items: [   /* s=전화번호 / fav: true 를 넣으면 전화 앱 '즐겨찾기'에도 표시 / 전화 앱의 연락처 탭과 같은 목록 */
+      { t: "도미니코 신부", s: "(0715 627 4357)", d: "" },
+      { t: "마리아 수녀", s: "(0734 584 5224)", d: "",
+        answer: {
+		  ringSec: 20,    
+          end: 40,        
+          script: [       
+            { at: 1,  text: "마리아입니다." },
+            { at: 3,  text: "무엇을 도와드릴까요?" },
+			{ at: 6, text: "…" }, 
+            { at: 15, text: "일정요? 잠시만요." },
+			{ at: 18, text: "(무언가 뒤적거리는 소리)" },
+            { at: 24, text: "네, 아마 가능할 것 같아요." },
+			{ at: 28, text: "…" },
+			{ at: 33, text: "알겠습니다. 다음에 뵐게요!" },
+			{ at: 36, text: "…" }
+          ] } },
+	  { t: "바오로 신부", s: "(0723 532 1468)", d: "" },
+	  { t: "베드로 신부", s: "(0754 232 3855)", d: "" ,
+        answer: {
+		  ringSec: 20,    
+          end: 30,        
+          script: [       
+            { at: 1,  text: "여보세요?" },
+			{ at: 4, text: "웬일로 전화를 다 걸고!" }, 
+            { at: 7, text: "…" },
+			{ at: 10, text: "아… 잘못 걸었다고?" },
+            { at: 13, text: "너무해!" },
+			{ at: 15, text: "…" },
+			{ at: 19, text: "(웃음 소리)" },
+			{ at: 22, text: "아냐, 괜찮아." },
+			{ at: 24, text: "쉬어!" },
+			{ at: 26, text: "…" }
+          ] } },
+	  { t: "세베로 주교", s: "(0721 132 3524)", d: "" },
+	  { t: "세인즈버리", s: "(0800 328 1700)", d: "" },
+	  { t: "수산나 수녀", s: "(0704 233 1233)", d: "" },
+	  { t: "스코필드 형사", s: "(0743 290 6653)", fav: true, d: "노엘" },
+	  { t: "아델라 수녀", s: "(0777 131 8852)", d: "" },
+	  { t: "안젤라 수녀", s: "(0731 523 1127)", d: "" },
+	  { t: "요한.A 신부", s: "(0742 853 4585)", d: "알렌, 교구실",
+        answer: {
+		  ringSec: 20,    
+          end: 27,        
+          script: [       
+            { at: 1,  text: "전화 받았습니다." },
+			{ at: 4, text: "…" }, 
+            { at: 9, text: "글쎄요." },
+			{ at: 12, text: "파더 베드로가 알지 않나요?" },
+            { at: 15, text: "…" },
+			{ at: 19, text: "확인해볼게요." },
+			{ at: 22, text: "수고하세요." },
+			{ at: 24, text: "…" }
+          ] } },
+	  { t: "요한.H 신부", s: "(0734 884 4820)", d: "해리슨" },
+      { t: "은사님", s: "(0724 056 7234)",fav: true, d: "",
+         answer: { 
+		  ringSec: 20,    
+          end: 53,        
+          script: [       
+            { at: 2,  text: "안젤로?" },
+            { at: 5,  text: "…" },
+			{ at: 8, text: "연락 줘서 고맙다." }, 
+            { at: 12, text: "그…" },
+			{ at: 15, text: "…" },
+            { at: 20, text: "요즘 잠은 잘 자고?" },
+			{ at: 25, text: "…" },
+			{ at: 27, text: "그래. 다행이다." },
+			{ at: 30, text: "…" },
+			{ at: 38, text: "알겠어, 그러도록 하렴." },
+			{ at: 43, text: "…" },
+			{ at: 47, text: "고맙다." },
+			{ at: 49, text: "…" }
+          ] } }
+    ]},
+
+    { name: "캘린더", img: "" /* ← 여기 앱 아이콘 이미지를 넣으세요 */, color: "#fff", type: "cal", items: [   /* date: "연-월-일" 형식 그대로 */
+      { date: "2026-10-2", t: "모트셔(장기)", s: "오후 9:00", d: "" },
+	  { date: "2026-10-6", t: "복귀", s: "오전 8:00", d: "" },
+	  { date: "2026-10-12", t: "텔링턴", s: "오후 10:00", d: "" },
+	  { date: "2026-10-15", t: "텔링턴", s: "오후 10:00", d: "" },
+	  { date: "2026-10-17", t: "텔링턴", s: "오후 10:00", d: "" },
+      { date: "2026-10-18", t: "텔링턴", s: "오후 10:00", d: "" } ]},
+
+    { name: "지도", img: "" /* ← 여기 앱 아이콘 이미지를 넣으세요 */, color: "#5ac8fa", type: "map", items: [   /* x,y = 핀 위치(0~100) */
+      { t: "Clean Linen & Workwear", s: "Llandeilo Road 1", d: "", x: 68, y: 65 } ]},
+
+    { name: "카메라", img: "" /* ← 여기 앱 아이콘 이미지를 넣으세요 */, color: "#636366", type: "camera", text: "" },   /* 셔터를 누르면 사진 앱에 추가 */
+
+    { name: "날씨", img: "" /* ← 여기 앱 아이콘 이미지를 넣으세요 */, color: "#4a90e2", type: "weather", w: {
+      city: "영국", temp: "11°", cond: "대체로 흐림", hi: "13°", lo: "10°",
+      hours: [["지금","⛅","11°"],["1시","⛅","13°"],["2시","⛅","14°"],["3시","☁️","13°"]],
+      days: [["오늘","☁️","13°","10°"],["내일","⛅","13°","9°"],["모레","☁️","13°","7°"]] }},
+
+    { name: "시계", img: "" /* ← 여기 앱 아이콘 이미지를 넣으세요 */, color: "#1c1c1e", type: "clock",
+      sleep: { bed: "08:00", wake: "17:00", on: true },   // ★ 수면/기상 알람 시간 (24시간 형식 "시:분", 예: "06:30")
+      timer: { h: 0, m: 5, s: 0 },                        // 타이머 기본 시간
+      items: [   /* 일반 알람: t=시각(24시간 형식), s=알람 이름, on=true(켜짐)/false(꺼짐) */
+        { t: "06:30", s: "아침", on: true },
+        { t: "15:00", s: "저녁", on: false } ]},
+
+    { name: "계산기", img: "" /* ← 여기 앱 아이콘 이미지를 넣으세요 */, color: "#ff9f0a", type: "calc" },
+
+    { name: "설정", img: "" /* ← 여기 앱 아이콘 이미지를 넣으세요 */, color: "#8e8e93", type: "settings", items: [   /* on 이 있으면 스위치, 없으면 눌러서 상세 */
+      { t: "Wi-Fi", s: "BT-134e24", on: true },
+      { t: "블루투스", s: "", on: true },
+      { t: "방해 금지 모드", s: "", on: false },
+      { t: "배터리", s: "80%" } ]}
+  ]
+};
+/* ★★★ 수정 구역 끝! 아래는 건드리지 마세요 ★★★ */
+
+const P=PHONE,$=s=>document.querySelector(s),Q=$('#screen'),AP=$('#app'),L=$('#lock');
+const E=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const U=s=>s?`background:url('${s}') center/cover`:'';
+const K=(y,m,d)=>y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+const T=P.today?new Date(P.today+'T12:00:00'):new Date();
+let C=null,ft,pc=null,rf=0,A,S=null,tab='keys',num='',calc='',pw='',mp=0,mt,ci,cm=new Date(T.getFullYear(),T.getMonth(),1),cd=K(T.getFullYear(),T.getMonth(),T.getDate());
+const find=t=>P.apps.find(a=>a.type==t);
+const f='fill="currentColor" stroke="none"',CP='M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z';
+const IC={
+ call:`<path ${f} d="${CP}"/>`,end:`<g transform="rotate(135 12 12)"><path ${f} d="${CP}"/></g>`,
+ star:`<path ${f} d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.9-6.2-3.3-6.2 3.3 1.2-6.9-5-4.9 6.9-1z"/>`,
+ recent:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+ person:`<circle ${f} cx="12" cy="8" r="4"/><path ${f} d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/>`,
+ keypad:[5,12,19].map(x=>[4,9.5,15,20.5].map(y=>`<circle ${f} cx="${x}" cy="${y}" r="1.8"/>`).join('')).join(''),
+ vm:'<circle cx="7" cy="12" r="4"/><circle cx="17" cy="12" r="4"/><path d="M7 16h10"/>',
+ mute:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M4 4l16 16"/>',
+ speaker:`<path ${f} d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/>`,
+ plus:'<path d="M12 5v14M5 12h14" stroke-width="2.4"/>',
+ video:`<rect ${f} x="2" y="6" width="14" height="12" rx="3"/><path ${f} d="M17.5 10.5L22 7.5v9l-4.5-3z"/>`,
+ backspace:'<path d="M9 5h11a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9l-6-7z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/>',
+ search:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>',
+ lock:`<rect ${f} x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>`,
+ globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+ alarm:'<circle cx="12" cy="13" r="7.5"/><path d="M12 9v4l2.5 2M4 5l3-2M20 5l-3-2"/>',
+ stopwatch:'<circle cx="12" cy="14" r="7"/><path d="M12 10v4M10 3h4M12 3v4M18 6l1.5-1.5"/>',
+ timer:'<circle cx="12" cy="13" r="8"/><path d="M12 13V8M9.5 2h5"/>',
+ bed:`<path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle ${f} cx="7" cy="11" r="1.6"/>`,
+ prev:`<path ${f} d="M19 5v14L9 12z"/><path d="M6 5v14" stroke-width="2.6"/>`,
+ play:`<path ${f} d="M7 4.5v15l13-7.5z"/>`,
+ next:`<path ${f} d="M5 5v14l10-7z"/><path d="M18 5v14" stroke-width="2.6"/>`,
+ note:`<path d="M9 18V6l11-2v12"/><circle ${f} cx="7" cy="18" r="2.5"/><circle ${f} cx="18" cy="16" r="2.5"/>`,
+ pin:'<path fill="#ff3b30" stroke="none" d="M12 22s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.6" fill="#fff" stroke="none"/>'};
+const ic=n=>{const u=(P.icons||{})[n];return u?`<img class="ico" src="${E(u)}">`:`<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`};
+const KP=[['1',''],['2','ABC'],['3','DEF'],['4','GHI'],['5','JKL'],['6','MNO'],['7','PQRS'],['8','TUV'],['9','WXYZ'],['*',''],['0','+'],['#','']];
+const dg=s=>String(s).replace(/\D/g,''),findC=n=>{const d=dg(n);return find('contacts').items.find(x=>(d&&dg(x.s)==d)||x.s==n||x.t==n)},nm=()=>{const c=num&&findC(num);return c?c.t:''};   /* 숫자만 비교: 띄어쓰기·하이픈·괄호가 달라도 같은 번호로 인식 */
+function kd(k){num+=k;upd()}
+function upd(){$('#dn').textContent=num;$('#dm').textContent=nm();$('#bk').style.visibility=num?'visible':'hidden'}
+const li=(x,j)=>`<li onclick="${x.on===undefined?'sub':'tg'}(${j})"><b>${E(x.t)}${x.on===undefined?'':`<i class="sw ${x.on?'on':''}"></i>`}</b><small>${E(x.s)}</small></li>`;
+const G=a=>'<ul>'+a.items.map(li).join('')+'</ul>';
+const D=x=>`<h2>${E(x.t)}</h2><div class="card">${x.s?E(x.s)+'\n\n':''}${E(x.d)}</div>`;
+
+const V={
+ phone:{l:a=>{if(pc!==null)return V.contacts.d(find('contacts').items[pc]);const cs=find('contacts').items;
+  if(tab=='favs'){const f=cs.filter(x=>x.fav);return f.length?'<ul>'+f.map(x=>`<li onclick="call('${E(x.s)}')"><b>${E(x.t)}</b><small>${E(x.s)}</small></li>`).join('')+'</ul>':'<p class="sub">즐겨찾기가 없습니다</p>'}
+  if(tab=='con')return '<div class="url">'+ic('search')+' 검색</div><ul>'+cs.map((x,j)=>`<li onclick="pc=${j};draw()"><b>${E(x.t)}</b></li>`).join('')+'</ul>';
+  if(tab=='keys')return `<div id="dn">${E(num)}</div><div id="dm">${E(nm())}</div><div class="kp">${KP.map(k=>`<b onclick="kd('${k[0]}')"><span>${k[0]}</span><small>${k[1]}</small></b>`).join('')}</div><div class="cb"><s></s><i onclick="call(num)">${ic('call')}</i><em id="bk" style="visibility:${num?'visible':'hidden'}" onclick="num=num.slice(0,-1);upd()">${ic('backspace')}</em></div>`;
+  const m=x=>x.s.startsWith('부재중');
+  return `<div class="seg"><u class="${rf?'':'on'}" onclick="rf=0;draw()">전체</u><u class="${rf?'on':''}" onclick="rf=1;draw()">부재중</u></div><ul>`+(a.items.filter(x=>!rf||m(x)).map(x=>`<li onclick="call('${E(x.n||x.t)}')"><b style="${m(x)?'color:#ff3b30':''}">${E(x.t)}</b><small>${E(x.s)}</small></li>`).join('')||'<li><small>기록 없음</small></li>')+'</ul>'}},
+ safari:{l:a=>`<div class="url">${ic('search')} 검색 또는 웹사이트 이름 입력</div><ul>${a.items.map((x,j)=>li({t:x.t,s:x.url},j)).join('')}</ul>`,
+  d:x=>`<div class="url">${ic('lock')} ${E(x.url)}</div><h2>${E(x.t)}</h2><div class="card">${E(x.d)}</div>`},
+ chat:{l:a=>'<ul>'+a.items.map((x,j)=>`<li onclick="sub(${j})"><b>${E(x.name)}<em>${E(x.time)}</em></b><small>${E((x.msgs.filter(m=>m[0]!='date').slice(-1)[0]||['',''])[1])}</small></li>`).join('')+'</ul>',
+  d:x=>x.msgs.map(m=>m[0]=='date'?`<div class="dv">${E(m[1])}</div>`:`<div class="msg ${m[0]=='me'?'me':'them'}">${E(m[1])}</div>`+(m[2]?`<div class="mt ${m[0]=='me'?'r':''}">${E(m[2])}</div>`:'')).join('')+`<div class="in"><input id="mi" placeholder="iMessage" onkeydown="event.key=='Enter'&&send()"><b onclick="send()">↑</b></div>`},
+ music:{l:G,d:x=>`<div class="art" style="${U(x.art)}">${x.art?'':ic('note')}</div><h2 style="text-align:center">${E(x.t)}</h2><p class="sub">${E(x.s)}</p><div class="ctl"><i onclick="sub((S+A.items.length-1)%A.items.length)">${ic('prev')}</i><i id="pp" onclick="play()">${ic('play')}</i><i onclick="sub((S+1)%A.items.length)">${ic('next')}</i></div><div class="card">${E(x.d)}</div>`},
+ photos:{l:a=>'<div class="pg">'+a.items.map((x,j)=>`<div onclick="sub(${j})" style="${U(x.src)}">${x.src?'':'(사진)'}</div>`).join('')+'</div>',
+  d:x=>`<div class="big" style="${U(x.src)}">${x.src?'':'(사진)'}</div><div class="card">${E(x.cap)}</div>`},
+ notes:{l:a=>'<ul>'+a.items.map((x,j)=>li({t:x.t,s:(x.d||'').split('\n')[0]},j)).join('')+'</ul>',
+  d:x=>`<input class="ti" value="${E(x.t)}" oninput="A.items[S].t=this.value"><textarea class="ta" oninput="A.items[S].d=this.value">${E(x.d)}</textarea>`,
+  add:a=>{a.items.unshift({t:'새로운 메모',d:''});return 0}},
+ contacts:{l:a=>'<ul>'+a.items.map((x,j)=>li(x,j)).join('')+'</ul>',
+  d:x=>`<div class="av">${E([...x.t][0])}</div><h2 style="text-align:center">${E(x.t)}</h2><ul><li onclick="call('${E(x.s)}')"><b><span style="display:flex;gap:8px;align-items:center;color:#34c759">${ic('call')} 통화</span></b><small>${E(x.s)}</small></li></ul><div class="card" style="margin-top:12px">${E(x.d)}</div>`},
+ cal:{l:a=>{const y=cm.getFullYear(),m=cm.getMonth(),f=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate();let g='<span></span>'.repeat(f);
+  for(let d=1;d<=n;d++){const k=K(y,m,d);g+=`<span class="d ${k==cd?'sel':''}" onclick="cd='${k}';draw()">${d}${a.items.some(x=>x.date==k)?'<i>•</i>':''}</span>`}
+  return `<div class="mh"><b onclick="cm=new Date(${y},${m-1},1);draw()">‹</b>${y}년 ${m+1}월<b onclick="cm=new Date(${y},${m+1},1);draw()">›</b></div><div class="cg">${[...'일월화수목금토'].map(x=>`<em>${x}</em>`).join('')}${g}</div><ul style="margin-top:16px">`+(a.items.map((x,j)=>x.date==cd?`<li onclick="sub(${j})"><b>${E(x.t)}<em>${E(x.s)}</em></b></li>`:'').join('')||'<li><small>일정 없음</small></li>')+'</ul>'},
+  d:x=>`<h2>${E(x.t)}</h2><div class="card">${E(x.date)} ${E(x.s)}\n\n${E(x.d)}</div>`},
+ map:{l:a=>`<div class="map">${a.items.map((x,j)=>`<i style="left:${x.x}%;top:${x.y}%" onclick="sub(${j})">${ic('pin')}</i>`).join('')}</div>`+G(a),d:D},
+ camera:{l:a=>`<div class="vf">${E(a.text)}<div id="fl"></div></div><div class="sh" onclick="shoot()"></div>`},
+ weather:{l:a=>{const w=a.w;return `<div class="wx"><p>${w.city}</p><h1>${w.temp}</h1><p>${w.cond} · 최고 ${w.hi} 최저 ${w.lo}</p></div><div class="hr">${w.hours.map(h=>`<span>${h[0]}<br>${h[1]}<br>${h[2]}</span>`).join('')}</div><ul>${w.days.map(d=>`<li><b>${d[0]}<em>${d[1]} ${d[3]} / ${d[2]}</em></b></li>`).join('')}</ul>`}},
+ clock:{l:a=>{if(tab=='sw')return swH();if(tab=='tm')return tmH();const s=a.sleep;
+  return `<div class="card sl"><b><span style="display:flex;gap:8px;align-items:center">${ic('bed')} 수면 | 기상</span><i class="sw ${s.on?'on':''}" onclick="A.sleep.on=!A.sleep.on;draw()"></i></b><div class="sr"><label>취침<input type="time" value="${s.bed}" onchange="A.sleep.bed=this.value;draw()"></label><label>기상<input type="time" value="${s.wake}" onchange="A.sleep.wake=this.value;draw()"></label></div><small style="color:#8e8e93">수면 시간 ${dur(s)}</small></div><h2 style="margin-top:18px">기타</h2><ul>${a.items.map((x,j)=>`<li onclick="sub(${j})"><b><span style="font-size:32px;font-weight:300">${fm(x.t)}</span><i class="sw ${x.on?'on':''}" onclick="event.stopPropagation();tg(${j})"></i></b><small>${E(x.s)}</small></li>`).join('')||'<li><small>알람 없음</small></li>'}</ul>`},
+  d:x=>`<div class="card"><label class="fr">시간<input type="time" value="${E(x.t)}" oninput="A.items[S].t=this.value"></label><label class="fr">이름<input value="${E(x.s)}" oninput="A.items[S].s=this.value"></label></div><ul style="margin-top:14px"><li style="color:#ff3b30" onclick="A.items.splice(S,1);S=null;draw()"><b>알람 삭제</b></li></ul>`,
+  add:a=>{a.items.push({t:'07:00',s:'알람',on:true});return a.items.length-1}},
+ calc:{l:()=>`<div class="cw"><div id="cdp">${E(calc||0)}</div><div class="kp c">${['AC','±','%','÷',7,8,9,'×',4,5,6,'−',1,2,3,'+',0,'.','='].map(k=>`<b onclick="ck('${k}')">${k}</b>`).join('')}</div></div>`},
+ settings:{l:a=>`<div class="card" style="margin-bottom:14px"><b style="font-size:20px">${E(P.owner)}</b><br><small style="color:#8e8e93">Apple ID, iCloud</small></div>`+G(a),d:D}
+};
+
+function tick(){const d=new Date(),t=P.time||d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');$('#clock').textContent=t;$('#lt').textContent=t;const c=$('#ck');if(c)c.textContent=t}
+const R=(n,g)=>[...Array(n)].map((_,i)=>g(i)).join(''),PC=['#ff9500','#ffcc00','#34c759','#5ac8fa','#007aff','#af52de','#ff2d55','#ff3b30'];
+const HG={   /* 홈 화면 기본 앱 아이콘 (앱의 type 별 그림) */
+ phone:()=>`<g transform="translate(12 12) scale(1.5)"><path fill="#fff" d="${CP}"/></g>`,
+ safari:()=>`<circle cx="30" cy="30" r="21" fill="#fff"/><circle cx="30" cy="30" r="18" fill="#e8f1ff"/>${R(12,i=>`<path d="M30 12.5v3" stroke="#8e8e93" stroke-width="1.2" transform="rotate(${i*30} 30 30)"/>`)}<g transform="rotate(45 30 30)"><path d="M30 14l5.5 16h-11z" fill="#ff3b30"/><path d="M30 46l-5.5-16h11z" fill="#c7c7cc"/></g>`,
+ chat:()=>`<ellipse cx="30" cy="28" rx="19" ry="15" fill="#fff"/><path d="M14 38c.5 4-1.5 8-4 10.5 6 .5 10-1.5 13-4.5z" fill="#fff"/>`,
+ music:()=>`<g fill="#fff"><path d="M22 14l20-4v8l-20 4z"/><rect x="22" y="14" width="4" height="26"/><rect x="38" y="10" width="4" height="26"/><circle cx="20" cy="40" r="5"/><circle cx="36" cy="36" r="5"/></g>`,
+ photos:()=>`<rect width="60" height="60" fill="#fff"/>${R(8,i=>`<ellipse cx="30" cy="20" rx="6" ry="10" fill="${PC[i]}" opacity=".8" transform="rotate(${i*45} 30 30)"/>`)}`,
+ notes:()=>`<rect width="60" height="60" fill="#fff"/><rect width="60" height="17" fill="#ffd60a"/><path d="M10 29h40M10 38h40M10 47h40" stroke="#e0e0e5" stroke-width="2"/>`,
+ contacts:()=>`<rect width="60" height="60" fill="#d4d4d9"/><circle cx="30" cy="24" r="9" fill="#8e8e93"/><path d="M12 56c0-11 8-17 18-17s18 6 18 17z" fill="#8e8e93"/>`,
+ cal:()=>`<rect width="60" height="60" fill="#fff"/><text x="30" y="17" text-anchor="middle" font-size="11" font-weight="600" fill="#ff3b30">${'일월화수목금토'[T.getDay()]}요일</text><text x="30" y="49" text-anchor="middle" font-size="31" font-weight="300" fill="#111">${T.getDate()}</text>`,
+ map:()=>`<rect width="60" height="60" fill="#c8e6c0"/><path d="M0 42L60 22" stroke="#fff" stroke-width="7"/><path d="M24 0L38 60" stroke="#fff" stroke-width="6"/><path d="M0 10l22 9" stroke="#f5d86a" stroke-width="4"/><path d="M30 12c-6.500 0-11 4.500-11 10.500 0 7.500 11 19.500 11 19.500s11-12 11-19.500C41 16.500 36.500 12 30 12z" fill="#ff3b30"/><circle cx="30" cy="22" r="4" fill="#fff"/>`,
+ camera:()=>`<rect width="60" height="60" fill="#c7c7cc"/><rect x="8" y="19" width="44" height="29" rx="6" fill="#2c2c2e"/><path d="M21 19l3-5h12l3 5z" fill="#2c2c2e"/><circle cx="30" cy="33" r="9.500" fill="#c7c7cc"/><circle cx="30" cy="33" r="6.500" fill="#48484a"/>`,
+ weather:()=>`<circle cx="22" cy="22" r="10" fill="#ffd60a"/><ellipse cx="30" cy="43" rx="18" ry="9" fill="#fff"/><circle cx="25" cy="38" r="9" fill="#fff"/><circle cx="37" cy="36" r="10" fill="#fff"/>`,
+ clock:()=>{const d=new Date(),m=d.getMinutes()*6,hr=(d.getHours()%12)*30+d.getMinutes()/2;return `<rect width="60" height="60" fill="#1c1c1e"/><circle cx="30" cy="30" r="23" fill="#fff"/>${R(12,i=>`<path d="M30 9v3" stroke="#333" stroke-width="1.6" transform="rotate(${i*30} 30 30)"/>`)}<path d="M30 30V19" stroke="#111" stroke-width="2.6" stroke-linecap="round" transform="rotate(${hr} 30 30)"/><path d="M30 30V13" stroke="#111" stroke-width="2" stroke-linecap="round" transform="rotate(${m} 30 30)"/><circle cx="30" cy="30" r="2" fill="#ff9f0a"/>`},
+ calc:()=>`<rect width="60" height="60" fill="#1c1c1e"/>${R(12,i=>`<circle cx="${12+(i%4)*12}" cy="${17+Math.floor(i/4)*13}" r="4.800" fill="${i%4==3?'#ff9f0a':i<3?'#a5a5a5':'#505052'}"/>`)}`,
+ settings:()=>`<g fill="#d8d8dc"><circle cx="30" cy="30" r="14"/>${R(8,i=>`<rect x="26.500" y="9" width="7" height="12" rx="2" transform="rotate(${i*45} 30 30)"/>`)}</g><circle cx="30" cy="30" r="7" fill="#8e8e93"/>`
+};
+const HI=a=>`<svg viewBox="0 0 60 60">${HG[a.type]?HG[a.type]():`<text x="30" y="40" text-anchor="middle" font-size="30" font-weight="600" fill="#fff">${E(a.name[0])}</text>`}</svg>`;
+const ico=a=>`<div class="ic" onclick="openApp('${a.name}',this)"><i style="${a.img?U(a.img):'background:'+a.color}">${a.img?'':HI(a)}</i><span>${E(a.name)}</span></div>`;
+$('#home').style.background=P.wallpaper;L.style.background=P.wallpaper;
+$('#grid').innerHTML=P.apps.filter(a=>!P.dock.includes(a.name)).map(ico).join('');
+$('#dock').innerHTML=P.dock.map(n=>ico(P.apps.find(a=>a.name==n))).join('');
+$('#ld').textContent=P.lockDate;$('#note').innerHTML=`<b>${E(P.lockNotice.title)}</b>${E(P.lockNotice.text)}`;
+$('#keys').innerHTML=[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>`<b onclick="pk('${k}')" style="${k===''?'visibility:hidden':''}">${k=='⌫'?ic('backspace'):`<span>${k}</span><small>${(KP.find(x=>x[0]==k)||[0,''])[1]}</small>`}</b>`).join('');
+$('#cg').innerHTML=[['mute','음소거'],['keypad','키패드'],['speaker','스피커'],['plus','통화 추가'],['video','FaceTime'],['person','연락처']].map(g=>`<div class="gb" onclick="this.classList.toggle('on')">${ic(g[0])}<small>${g[1]}</small></div>`).join('');
+$('#ce').innerHTML=ic('end');
+$('#ci').innerHTML=`<div class="rw"><div class="rb r" onclick="hang()">${ic('end')}</div>거절</div><div class="rw"><div class="rb g" onclick="accept()">${ic('call')}</div>수락</div>`;
+tick();setInterval(tick,15000);
+
+function dots(){[...document.querySelectorAll('#dots i')].forEach((d,i)=>d.className=i<pw.length?'f':'')}
+function pk(k){if(k=='⌫')pw=pw.slice(0,-1);else if(k!=='')pw+=k;dots();if(pw.length==4)setTimeout(()=>{Q.classList.add('unlocked');pw='';dots()},200)}
+const st=()=>Q.classList.contains('unlocked')?(Q.classList.contains('open')?'app':'home'):Q.classList.contains('pass')?'pass':'lock';
+$('#island').onclick=()=>{closeApp();Q.classList.remove('pass','unlocked');pw='';dots()};
+
+[$('#bar'),L].forEach(el=>{let y0=null;
+ el.onpointerdown=e=>{y0=e.clientY;el.setPointerCapture(e.pointerId)};
+ el.onpointermove=e=>{if(y0===null)return;const d=Math.min(0,e.clientY-y0),s=st();
+  if(s=='lock'){L.style.transition='none';L.style.transform=`translateY(${d}px)`}
+  if(s=='app'){AP.style.transition='none';AP.style.transform=`scale(${1+d/900}) translateY(${d/4}px)`}};
+ el.onpointerup=e=>{if(y0===null)return;const d=e.clientY-y0,s=st();y0=null;L.style.transition=AP.style.transition='';L.style.transform=AP.style.transform='';
+  if(d<-60||Math.abs(d)<6){if(s=='lock')Q.classList.add('pass');else if(s=='app')closeApp()}}});
+
+function openApp(n,el){A=find0(n);S=null;pc=null;tab=A.type=='clock'?'alarm':'keys';draw();
+ if(el){const r=el.getBoundingClientRect(),s=Q.getBoundingClientRect();AP.style.transformOrigin=`${r.left-s.left+r.width/2}px ${r.top-s.top+r.height/2}px`}
+ Q.classList.add('open','inapp')}
+const find0=n=>P.apps.find(a=>a.name==n);
+function closeApp(){Q.classList.remove('open','inapp');clearInterval(mt)}
+function back(){if(A.type=='phone'&&pc!==null){pc=null;draw()}else if(S!==null){S=null;draw()}else closeApp()}
+function sub(j){S=j;draw()}
+function add(){S=V[A.type].add(A);draw()}
+function tg(j){A.items[j].on=!A.items[j].on;draw()}
+const TL={favs:'즐겨찾기',rec:'최근 통화',con:'연락처',keys:'키패드',alarm:'알람',sw:'스톱워치',tm:'타이머'};
+const TABS={phone:[['favs','star','즐겨찾기'],['rec','recent','최근 통화'],['con','person','연락처'],['keys','keypad','키패드'],['vm','vm','음성 사서함']],
+ clock:[['world','globe','세계 시계'],['alarm','alarm','알람'],['sw','stopwatch','스톱워치'],['tm','timer','타이머']]};
+const OFF=['vm','world'];   /* 음성 사서함·세계 시계 탭은 일부러 눌러도 열리지 않게 함 */
+const tabs=()=>TABS[A.type].map(t=>`<div class="${tab==t[0]?'on':''}" ${OFF.includes(t[0])?'':`onclick="tab='${t[0]}';pc=null;draw()"`}><b>${ic(t[1])}</b>${t[2]}</div>`).join('');
+function draw(){clearInterval(mt);mp=0;const x=S!==null?A.items[S]:null,v=V[A.type],tb=TABS[A.type],px=A.type=='phone'&&pc!==null?find('contacts').items[pc]:null,ad=v.add&&(A.type!='clock'||tab=='alarm');
+ $('#ttl').textContent=x?(x.name||x.t||''):px?px.t:tb?TL[tab]||'':A.name;$('#back').textContent=px?'‹ 연락처':x?'‹ '+A.name:'‹ 홈';
+ $('#act').textContent=!x&&ad?'＋':'';$('#body').innerHTML=x?v.d(x):v.l(A);$('#tb').innerHTML=tb?tabs():'';$('#body').style.paddingBottom=tb?'96px':'';
+ $('#body').scrollTop=A.type=='chat'&&x?9e4:0;tick()}
+
+function send(){const i=$('#mi'),v=i.value.trim(),x=A.items[S],s=S;if(!v)return;x.msgs.push(['me',v]);draw();$('#mi').focus();
+ if(x.call&&!x._c){x._c=1;setTimeout(()=>{if(!C)begin({name:x.name,dir:'in',ph:'in',ringSec:x.call.ringSec||20,sc:x.call.script||[],end:x.call.end||30})},(x.callAfter||5)*1000)}
+ if(x.replies&&x.replies.length)setTimeout(()=>{x.msgs.push(['them',x.replies[(x.n||0)%x.replies.length]]);x.n=(x.n||0)+1;if(S===s&&A.items[S]===x)draw()},1200)}
+function play(){const x=A.items[S];if(x&&x.link)window.open(x.link,'_blank','noopener')}
+function shoot(){const f=$('#fl');f.style.opacity=1;setTimeout(()=>f.style.opacity=0,150);find('photos').items.unshift({src:'',cap:'방금 찍은 사진'})}
+const mmss=e=>String(Math.floor(e/60)).padStart(2,'0')+':'+String(Math.floor(e%60)).padStart(2,'0');
+function call(n){if(!n||C)return;const c=findC(n),v=P.voicemail;
+ begin({name:c?c.t:n,dir:'out',ph:'ring',rings:(c&&c.answer&&c.answer.rings)||v.rings,ringSec:v.ringSec,ans:c&&c.answer})}
+function begin(o){clearTimeout(ft);C=o;C.t0=Date.now();$('#cn').textContent=o.name;$('#st').textContent='';
+ $('#call').className=o.dir=='in'?'in':'out';$('#cs').textContent=o.dir=='in'?'휴대전화':'발신 중...';
+ Q.classList.add('calling');clearInterval(ci);ci=setInterval(loop,200)}
+function accept(){if(!C)return;C.ph='live';C.t0=Date.now();$('#call').className='out'}
+function loop(){if(!C)return;const e=(Date.now()-C.t0)/1000,v=P.voicemail;
+ if(C.ph=='ring'){$('#st').textContent=v.ringText;if(e>=C.rings*C.ringSec){C.t0=Date.now();if(C.ans){C.ph='live';C.sc=C.ans.script;C.end=C.ans.end}else{C.ph='vm';C.sc=v.script;C.end=v.end}}return}
+ if(C.ph=='in'){if(e>=C.ringSec)finish('부재중 전화');return}
+ $('#cs').textContent=mmss(e);let t='';(C.sc||[]).forEach(s=>{if(e>=s.at)t=s.text});$('#st').textContent=t;
+ if(e>=C.end)finish(C.dir=='in'?'수신 전화':'발신 전화')}
+function hang(){if(C)finish(C.ph=='in'?'수신 거절':C.dir=='in'?'수신 전화':'발신 전화')}
+function finish(l){if(!C)return;clearInterval(ci);const n=C.name;C=null;$('#call').className='';$('#st').textContent='';
+ $('#cs').textContent=l=='부재중 전화'||l=='수신 거절'?l:'통화 종료';find('phone').items.unshift({t:n,s:l+' · 방금'});
+ ft=setTimeout(()=>Q.classList.remove('calling'),1000);if(A&&A.type=='phone'&&S===null)draw()}
+function ck(k){if(calc=='오류')calc='';
+ if(k=='AC')calc='';else if(k=='=')try{calc=String(+(+Function('return '+calc.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-'))()).toFixed(8))}catch(e){calc='오류'}
+ else if(k=='±')calc=calc[0]=='-'?calc.slice(1):'-'+calc;else if(k=='%')calc=String(parseFloat(calc)/100);else calc+=k;$('#cdp').textContent=calc||0}
+
+/* ---------- 시계 앱 기능 ---------- */
+const p2=n=>String(n).padStart(2,'0'),mi=t=>{const[a,b]=String(t).split(':');return +a*60+ +b};
+const dur=s=>{const d=(mi(s.wake)-mi(s.bed)+1440)%1440;return Math.floor(d/60)+'시간 '+d%60+'분'};
+const fm=t=>{const[a,b]=String(t).split(':');return (a<12?'오전 ':'오후 ')+((a%12)||12)+':'+b};
+const sw={run:0,st:0,ac:0,laps:[]},tm={on:0,run:0,left:0,end:0,h:0,m:5,s:0};
+const swT=()=>sw.ac+(sw.run?Date.now()-sw.st:0);
+const fmt=ms=>p2(Math.floor(ms/60000))+':'+p2(Math.floor(ms/1000)%60)+'.'+p2(Math.floor(ms/10)%100);
+const hms=ms=>{const t=Math.ceil(ms/1000);return p2(Math.floor(t/3600))+':'+p2(Math.floor(t/60)%60)+':'+p2(t%60)};
+const tmL=()=>tm.run?tm.end-Date.now():tm.left;
+Object.assign(tm,find('clock').timer||{});
+function swH(){return `<div class="bg2" id="swd">${fmt(swT())}</div><div class="cw2"><div class="cr" onclick="swL()">${sw.run?'랩':'재설정'}</div><div class="cr ${sw.run?'r':'g'}" onclick="swS()">${sw.run?'정지':'시작'}</div></div><ul>${sw.laps.map((l,i)=>`<li><b>랩 ${sw.laps.length-i}<span>${fmt(l-(sw.laps[i+1]||0))}</span></b></li>`).join('')}</ul>`}
+function swS(){if(sw.run){sw.ac+=Date.now()-sw.st;sw.run=0}else{sw.st=Date.now();sw.run=1}draw()}
+function swL(){if(sw.run)sw.laps.unshift(swT());else{sw.ac=0;sw.laps=[]}draw()}
+function tmH(){return tm.on?`<div class="bg2" id="tmd">${hms(tmL())}</div><div class="cw2"><div class="cr" onclick="tmC()">취소</div><div class="cr ${tm.run?'r':'g'}" onclick="tmP()">${tm.run?'일시정지':'재개'}</div></div>`
+ :`<div class="tmi"><label>시간<input type="number" min="0" max="23" value="${tm.h}" onchange="tm.h=+this.value"></label><label>분<input type="number" min="0" max="59" value="${tm.m}" onchange="tm.m=+this.value"></label><label>초<input type="number" min="0" max="59" value="${tm.s}" onchange="tm.s=+this.value"></label></div><div class="cw2" style="justify-content:center"><div class="cr g" onclick="tmS()">시작</div></div>`}
+function tmS(){tm.left=(tm.h*3600+tm.m*60+tm.s)*1000;if(tm.left<=0)return;tm.on=1;tm.run=1;tm.end=Date.now()+tm.left;draw()}
+function tmP(){if(tm.run){tm.left=tm.end-Date.now();tm.run=0}else{tm.end=Date.now()+tm.left;tm.run=1}draw()}
+function tmC(){tm.on=0;tm.run=0;draw()}
+let al,lastA='';
+function beep(){try{const a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator();o.connect(a.destination);o.frequency.value=880;o.start();setTimeout(()=>{o.stop();a.close()},600)}catch(e){}}
+function ring(t,s){$('#at').textContent=t;$('#as').textContent=s||'';Q.classList.add('alon');clearInterval(al);beep();al=setInterval(beep,1300)}
+function stopAl(){clearInterval(al);Q.classList.remove('alon')}
+setInterval(()=>{const e=$('#swd');if(e&&sw.run)e.textContent=fmt(swT());
+ if(tm.on&&tm.run){const l=tm.end-Date.now();if(l<=0){tm.on=0;tm.run=0;ring('타이머','시간이 다 되었습니다');if(A&&A.type=='clock'&&S===null)draw()}else{const d=$('#tmd');if(d)d.textContent=hms(l)}}
+ const d=new Date(),n=p2(d.getHours())+':'+p2(d.getMinutes());if(n!=lastA){lastA=n;const c=find('clock');
+  c.items.forEach(x=>{if(x.on&&x.t==n)ring('알람',x.s||fm(n))});if(c.sleep.on&&c.sleep.wake==n)ring('기상 알람',fm(n));if(c.sleep.on&&c.sleep.bed==n)ring('취침 시간',fm(n))}},100);
+
+/* ---------- 상단 아이콘 ---------- */
+const SB=P.statusBar||{},WF='<svg width="17" height="13" viewBox="0 0 17 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1.5 4.5a10 10 0 0 1 14 0"/><path d="M4 7.4a6.5 6.5 0 0 1 9 0"/><circle cx="8.5" cy="10.6" r="1" fill="currentColor"/></svg>';
+$('#sr').innerHTML=(SB.wifiImg?`<img src="${E(SB.wifiImg)}">`:WF)+(SB.batteryImg?`<img src="${E(SB.batteryImg)}">`:`<i class="bat"><i style="width:${SB.battery==null?80:SB.battery}%"></i></i>`);
+</script>
+</body></html>
